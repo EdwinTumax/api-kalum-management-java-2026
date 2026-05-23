@@ -1,5 +1,6 @@
 package edu.kalum.api.kalum.management.core.verticles;
 
+import edu.kalum.api.kalum.management.core.utilities.Utils;
 import io.vertx.circuitbreaker.CircuitBreaker;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -13,6 +14,7 @@ import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -26,6 +28,8 @@ public class ProducerEnrollmentVerticle extends AbstractVerticle {
     private EventBus eventBus;
     private CircuitBreaker circuitBreaker;
     private RabbitMQClient rabbitMQClient;
+    @Autowired
+    private Utils utils;
 
     @Override
     public void start() {
@@ -48,7 +52,7 @@ public class ProducerEnrollmentVerticle extends AbstractVerticle {
             String id = UUID.randomUUID().toString();
             JsonObject message = new JsonObject()
                     .put("orderId", id)
-                    .put("orderDate", new Date())
+                    .put("orderDate", utils.getDateWithFormat(new Date()))
                     .put("status", "IN_PROGRESS")
                     .put("data", order);
             logger.info(message.encodePrettily());
