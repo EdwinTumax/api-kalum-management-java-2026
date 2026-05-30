@@ -1,10 +1,8 @@
 package edu.kalum.api.kalum.management.core.verticles;
 
-import edu.kalum.api.kalum.management.core.utilities.Utils;
-import io.vertx.circuitbreaker.CircuitBreaker;
+import edu.kalum.logging.core.helpers.Utils;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
-import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -16,17 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @Component
 public class ProducerEnrollmentVerticle extends AbstractVerticle {
     private static final Logger logger = LoggerFactory.getLogger(ProducerEnrollmentVerticle.class);
-
-    private EventBus eventBus;
-    private CircuitBreaker circuitBreaker;
     private RabbitMQClient rabbitMQClient;
     @Autowired
     private Utils utils;
@@ -34,19 +27,17 @@ public class ProducerEnrollmentVerticle extends AbstractVerticle {
     @Override
     public void start() {
         RabbitMQOptions options = new RabbitMQOptions()
-                .setUser("guest")
-                .setPassword("guest")
-                .setHost("localhost")
-                .setPort(5672)
-                .setVirtualHost("/")
+                .setUser(config().getJsonObject("rabbit").getString("user"))
+                .setPassword(config().getJsonObject("rabbit").getString("password"))
+                .setHost(config().getJsonObject("rabbit").getString("host"))
+                .setPort(config().getJsonObject("rabbit").getInteger("port"))
+                .setVirtualHost(config().getJsonObject("rabbit").getString("virtualHost"))
                 .setAutomaticRecoveryEnabled(true);
         this.rabbitMQClient = RabbitMQClient.create(vertx, options);
-
-        this.eventBus = vertx.eventBus();
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
-
         router.route(HttpMethod.POST, "/kalum-management/v1/enrollments").handler(TimeoutHandler.create(5000, 504)).handler(ctx -> {
+            Long initialTime = new Date().getTime();
             JsonObject order = ctx.body().asJsonObject();
             ctx.response().putHeader("Content-Type", "application/json");
             String id = UUID.randomUUID().toString();
@@ -57,6 +48,7 @@ public class ProducerEnrollmentVerticle extends AbstractVerticle {
                     .put("data", order);
             logger.info(message.encodePrettily());
             sendOrder(message).onSuccess(messageResult -> {
+                this.utils.log(initialTime,messageResult.encode(),201,"info","eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0","/kalum-management/v1/enrollments");
                 ctx.response().setStatusCode(201);
                 ctx.response().end(messageResult.encode());
             }).onFailure(error -> {
@@ -64,7 +56,6 @@ public class ProducerEnrollmentVerticle extends AbstractVerticle {
                 ctx.response().end("Proceso no completado");
             });
         });
-
         vertx.createHttpServer().requestHandler(router).listen(9081).onSuccess(http -> {
             logger.info("El servidor HTTP ha iniciado correctamente en el puerto 9081");
         }).onFailure(error -> {
@@ -74,7 +65,7 @@ public class ProducerEnrollmentVerticle extends AbstractVerticle {
 
     private Future<JsonObject> sendOrder(JsonObject order) {
         return rabbitMQClient.start().compose(startResult ->
-                rabbitMQClient.basicPublish("edu.kalum.exchange.order", "provide", order.toBuffer())
+                rabbitMQClient.basicPublish(config().getJsonObject("rabbit").getString("exchange"), config().getJsonObject("rabbit").getString("routerKey"), order.toBuffer())
         ).map(publishResult -> {
             return new JsonObject()
                     .put("orderId", order.getString("orderId"))
