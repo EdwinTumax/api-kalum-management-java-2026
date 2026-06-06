@@ -2,10 +2,13 @@
   "rabbit": {
     "user": "guest",
     "password": "guest",
-    "host": "localhost",
+    "host": "dev-java-2026-rabbit",
     "port": 5672,
     "virtualHost": "/",
     "exchange": "edu.kalum.exchange.order",
     "routerKey": "provide"
+  },
+  "server": {
+    "port": 9081
   }
 }

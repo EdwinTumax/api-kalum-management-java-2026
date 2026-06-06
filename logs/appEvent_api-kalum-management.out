@@ -7,3 +7,7 @@ Started ApiKalumManagementApplication in 0.543 seconds (process running for 0.92
 Starting ApiKalumManagementApplication using Java 21.0.5 with PID 36285 (/Users/edwinrolandotumax/Documents/2026/java/backend/prod/api-kalum-management/target/classes started by edwinrolandotumax in /Users/edwinrolandotumax/Documents/2026/java/backend/prod/api-kalum-management)
 The following 1 profile is active: "dev"
 Started ApiKalumManagementApplication in 0.516 seconds (process running for 0.873)
+Starting ApiKalumManagementApplication using Java 21.0.5 with PID 38323 (/Users/edwinrolandotumax/Documents/2026/java/backend/prod/api-kalum-management/target/classes started by edwinrolandotumax in /Users/edwinrolandotumax/Documents/2026/java/backend/prod/api-kalum-management)
+The following 1 profile is active: "dev"
+Started ApiKalumManagementApplication in 0.534 seconds (process running for 0.926)
+{"name":"api-kalum-management","hostName":"app-server","apiKey":"eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0","uri":"/kalum-management/v1/enrollments","responseCode":202,"responseTime":62,"clientIp":"127.0.0.1","pid":1,"level":20,"message":"{\"orderId\":\"097eabea-e7e4-4d29-b1ab-5e0617f388c7\",\"orderDate\":\"2026-06-06T15:50:22Z\",\"message\":\"La orden fue creada exitosamente con el id 097eabea-e7e4-4d29-b1ab-5e0617f388c7\",\"status\":\"IN_PROGRESS\"}","dateTime":"2026-06-06T15:50:22Z","version":1}

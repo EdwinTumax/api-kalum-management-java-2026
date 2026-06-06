@@ -58,7 +58,7 @@ public class ProducerEnrollmentVerticle extends AbstractVerticle {
                 ctx.response().end(JsonObject.mapFrom(customError).encode());
             });
         });
-        vertx.createHttpServer().requestHandler(router).listen(9081).onSuccess(http -> {
+        vertx.createHttpServer().requestHandler(router).listen(config().getJsonObject("server").getInteger("port")).onSuccess(http -> {
             logger.debug("El servidor HTTP ha iniciado correctamente en el puerto 9081");
         }).onFailure(error -> {
             this.utils.log(new Date().getTime(),"[API-KALUM-MANAGEMENT] ".concat(error.getMessage()),500,"error","eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0","/kalum-management/v1/enrollments");

@@ -2,14 +2,14 @@
 <configuration>
    <appender name="SAVE-TO-FILE-ERROR"
              class="ch.qos.logback.core.rolling.RollingFileAppender">
-       <file>logs/appEvent_api-kalum-management.err</file>
+       <file>/var/log/app/appEvent_api-kalum-management.err</file>
        <encoder
                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
            <Pattern>%msg%n</Pattern>
        </encoder>
        <rollingPolicy
                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-           <fileNamePattern>logs/appEvent_api-kalum-management.%d{yyyy-MM}.error
+           <fileNamePattern>/var/log/app/appEvent_api-kalum-management.%d{yyyy-MM}.error
            </fileNamePattern>
            <maxHistory>10</maxHistory>
            <totalSizeCap>100MB</totalSizeCap>
@@ -22,14 +22,14 @@
    </appender>
    <appender name="SAVE-TO-FILE-INFO"
              class="ch.qos.logback.core.rolling.RollingFileAppender">
-       <file>logs/appEvent_api-kalum-management.out</file>
+       <file>/var/log/app/appEvent_api-kalum-management.out</file>
        <encoder
                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
            <Pattern>%msg%n</Pattern>
        </encoder>
        <rollingPolicy
                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-           <fileNamePattern>logs/appEvent_kalum-management.%d{yyyy-MM}.out
+           <fileNamePattern>/var/log/app/appEvent_kalum-management.%d{yyyy-MM}.out
            </fileNamePattern>
            <maxHistory>10</maxHistory>
            <totalSizeCap>100MB</totalSizeCap>
