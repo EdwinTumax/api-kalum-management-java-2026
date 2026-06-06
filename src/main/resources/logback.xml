@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+   <appender name="SAVE-TO-FILE-ERROR"
+             class="ch.qos.logback.core.rolling.RollingFileAppender">
+       <file>logs/appEvent_api-kalum-management.err</file>
+       <encoder
+               class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+           <Pattern>%msg%n</Pattern>
+       </encoder>
+       <rollingPolicy
+               class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+           <fileNamePattern>logs/appEvent_api-kalum-management.%d{yyyy-MM}.error
+           </fileNamePattern>
+           <maxHistory>10</maxHistory>
+           <totalSizeCap>100MB</totalSizeCap>
+       </rollingPolicy>
+       <filter class="ch.qos.logback.classic.filter.LevelFilter">
+           <level>ERROR</level>
+           <onMatch>ACCEPT</onMatch>
+           <onMismatch>DENY</onMismatch>
+       </filter>
+   </appender>
+   <appender name="SAVE-TO-FILE-INFO"
+             class="ch.qos.logback.core.rolling.RollingFileAppender">
+       <file>logs/appEvent_api-kalum-management.out</file>
+       <encoder
+               class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+           <Pattern>%msg%n</Pattern>
+       </encoder>
+       <rollingPolicy
+               class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+           <fileNamePattern>logs/appEvent_kalum-management.%d{yyyy-MM}.out
+           </fileNamePattern>
+           <maxHistory>10</maxHistory>
+           <totalSizeCap>100MB</totalSizeCap>
+       </rollingPolicy>
+       <filter class="ch.qos.logback.classic.filter.LevelFilter">
+           <level>INFO</level>
+           <onMatch>ACCEPT</onMatch>
+           <onMismatch>DENY</onMismatch>
+       </filter>
+   </appender>
+   <include
+           resource="org/springframework/boot/logging/logback/base.xml" />
+   <logger name="edu.kalum" level="INFO" >
+       <appender-ref ref="SAVE-TO-FILE-INFO"/>
+       <appender-ref ref="SAVE-TO-FILE-ERROR"/>
+   </logger>
+</configuration>

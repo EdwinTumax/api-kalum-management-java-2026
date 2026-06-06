@@ -1,6 +1,7 @@
 package edu.kalum.api.kalum.management.core;
 
 import edu.kalum.api.kalum.management.core.verticles.ProducerEnrollmentVerticle;
+import edu.kalum.logging.core.helpers.Utils;
 import io.vertx.config.ConfigRetriever;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
@@ -15,6 +16,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
 
+import java.util.Date;
+
 @SpringBootApplication
 public class ApiKalumManagementApplication implements CommandLineRunner {
 
@@ -25,6 +28,9 @@ public class ApiKalumManagementApplication implements CommandLineRunner {
 
 	@Autowired
 	private Environment env;
+
+	@Autowired
+	private Utils utils;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ApiKalumManagementApplication.class, args);
@@ -40,10 +46,10 @@ public class ApiKalumManagementApplication implements CommandLineRunner {
 
 		configRetriever.getConfig().onSuccess(config -> {
 			Vertx.vertx().deployVerticle(producerEnrollmentVerticle, new DeploymentOptions().setConfig(config)).onSuccess(id -> {
-				logger.info("Deployment ok: ".concat(id));
+				logger.debug("Deployment ok: ".concat(id));
 			});
 		}).onFailure(error -> {
-			error.printStackTrace();
+			this.utils.log(new Date().getTime(),error.getMessage(),503,"error","eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0","/kalum-management/v1/enrollments");
 		});
 	}
 }

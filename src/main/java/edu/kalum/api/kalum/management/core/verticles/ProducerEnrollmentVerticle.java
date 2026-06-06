@@ -1,5 +1,6 @@
 package edu.kalum.api.kalum.management.core.verticles;
 
+import edu.kalum.logging.core.application.dtos.CustomErrorDTO;
 import edu.kalum.logging.core.helpers.Utils;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -46,20 +47,21 @@ public class ProducerEnrollmentVerticle extends AbstractVerticle {
                     .put("orderDate", utils.getDateWithFormat(new Date()))
                     .put("status", "IN_PROGRESS")
                     .put("data", order);
-            logger.info(message.encodePrettily());
             sendOrder(message).onSuccess(messageResult -> {
-                this.utils.log(initialTime,messageResult.encode(),201,"info","eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0","/kalum-management/v1/enrollments");
-                ctx.response().setStatusCode(201);
+                this.utils.log(initialTime,messageResult.encode(),202,"info","eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0","/kalum-management/v1/enrollments");
+                ctx.response().setStatusCode(202);
                 ctx.response().end(messageResult.encode());
             }).onFailure(error -> {
-                ctx.response().setStatusCode(405);
-                ctx.response().end("Proceso no completado");
+                CustomErrorDTO customError = this.utils.getCustonError(403,"Error al momento de generar la orden");
+                this.utils.log(initialTime,error.getMessage(),403,"error","eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0","/kalum-management/v1/enrollments");
+                ctx.response().setStatusCode(403);
+                ctx.response().end(JsonObject.mapFrom(customError).encode());
             });
         });
         vertx.createHttpServer().requestHandler(router).listen(9081).onSuccess(http -> {
-            logger.info("El servidor HTTP ha iniciado correctamente en el puerto 9081");
+            logger.debug("El servidor HTTP ha iniciado correctamente en el puerto 9081");
         }).onFailure(error -> {
-            error.printStackTrace();
+            this.utils.log(new Date().getTime(),"[API-KALUM-MANAGEMENT] ".concat(error.getMessage()),500,"error","eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0","/kalum-management/v1/enrollments");
         });
     }
 
@@ -73,7 +75,7 @@ public class ProducerEnrollmentVerticle extends AbstractVerticle {
                     .put("message", "La orden fue creada exitosamente con el id ".concat(order.getString("orderId")))
                     .put("status", order.getString("status"));
         }).onFailure(error -> {
-            logger.error(error.getMessage());
+            this.utils.log(new Date().getTime(),"[RABBIT] ".concat(error.getMessage()),503,"error","eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0","/kalum-management/v1/enrollments");
         });
     }
 }
