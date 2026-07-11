@@ -1,7 +1,7 @@
 {
   "rabbit": {
-    "user": "guest",
-    "password": "guest",
+    "user": "access-kalum",
+    "password": "Kalum.2026",
     "host": "dev-java-2026-rabbit",
     "port": 5672,
     "virtualHost": "/",
